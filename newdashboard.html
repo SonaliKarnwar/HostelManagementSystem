@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hostello Dashboard</title>
+<style>
+  body { margin:0; background:#f4f6f9; font-family:Arial,sans-serif; }
+  .topbar { display:flex; align-items:center; justify-content:space-between; background:#2c3e50; color:white; padding:10px 20px; }
+  .topbar img { width:60px; margin-right:10px; }
+  .topbar .left { display:flex; align-items:center; }
+  .topbar h1 { font-size:20px; margin:0; }
+  .topbar .right { display:flex; align-items:center; gap:15px; }
+  .topbar button, #languageSelect { background:#f39c12; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; color:white; font-size:14px; }
+  #languageSelect { color:black; }
+  .topbar button:hover, #languageSelect:hover { background:#e67e22; }
+  header { text-align:center; padding:15px; }
+  header h2 { margin:5px 0; font-size:18px; color:#f39c12; }
+  nav { display:flex; justify-content:center; background:#34495e; }
+  nav button { flex:1; padding:15px; background:#34495e; color:white; border:none; cursor:pointer; font-size:16px; }
+  nav button:hover, nav button.active { background:#f39c12; }
+  .content { padding:20px; }
+  .hostel-list { display:grid; grid-template-columns:1fr 2fr 1fr; gap:15px; margin-bottom:20px; align-items:center; background:white; padding:15px; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1); transition:transform 0.2s; cursor:pointer; }
+  .hostel-list:hover { transform:scale(1.02); background:#fdf6e3; }
+  .hostel-list h3 { margin:0; color:#2c3e50; }
+  .video-placeholder { background:#dfe6e9; height:150px; display:flex; align-items:center; justify-content:center; color:#636e72; border-radius:8px; }
+  .fees { font-weight:bold; color:#2c3e50; }
+  .modal { display:none; position:fixed; z-index:999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
+  .modal-content { background:white; padding:20px; border-radius:10px; width:300px; text-align:center; }
+  .modal-content h3 { margin-bottom:15px; }
+  .modal-content input { width:90%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:5px; }
+  .modal-content button { padding:8px 15px; border:none; border-radius:5px; cursor:pointer; }
+  .close-btn { background:#e74c3c; color:white; }
+  .submit-btn { background:#27ae60; color:white; }
+</style>
+</head>
+<body>
+
+<!-- Topbar with Language Selector -->
+<div class="topbar">
+  <div class="left">
+    <img src="vpkbiet-logo.png" alt="VPKBIET Logo" style="width:60px; margin-right:10px;">
+    <h1 data-key="title">Vidya Pratishthan's</h1>
+  </div>
+  <div class="right">
+    <select id="languageSelect" onchange="changeLanguage(this.value)">
+      <option value="en">English</option>
+      <option value="mr">Marathi</option>
+      <option value="hi">Hindi</option>
+    </select>
+    <button data-key="accountBtn" onclick="openAccountModal()">Account</button>
+    <button data-key="admissionBtn" onclick="openAdmissionModal()">Admission Section</button>
+    <button data-key="centralOfficeBtn" onclick="openModal()">Central Office Registration</button>
+  </div>
+</div>
+
+<header>
+  <p data-key="address">Vidyanagar, Baramati, Pune - 413133</p>
+  <h2 data-key="hostello">Hostello</h2>
+</header>
+
+<nav>
+  <button class="active" data-key="girlsHostel" onclick="showTab('girls')">Girls Hostel</button>
+  <button data-key="boysHostel" onclick="showTab('boys')">Boys Hostel</button>
+</nav>
+
+<!-- Girls Hostel A–E -->
+<div class="content" id="girls">
+  <div class="hostel-list" onclick="goToLogin()">
+    <h3 data-key="hostelA">Hostel A</h3>
+    <div class="video-placeholder" data-key="videoPlaceholder">Video Placeholder</div>
+    <div class="fees" data-key="fees">Fees: Managed by Central Office</div>
+  </div>
+
+  <div class="hostel-list" onclick="goToLogin()">
+    <h3 data-key="hostelB">Hostel B</h3>
+    <div class="video-placeholder" data-key="videoPlaceholder">Video Placeholder</div>
+    <div class="fees" data-key="fees">Fees: Managed by Central Office</div>
+  </div>
+
+  <div class="hostel-list" onclick="goToLogin()">
+    <h3 data-key="hostelC">Hostel C</h3>
+    <div class="video-placeholder" data-key="videoPlaceholder">Video Placeholder</div>
+    <div class="fees" data-key="fees">Fees: Managed by Central Office</div>
+  </div>
+
+  <div class="hostel-list" onclick="goToLogin()">
+    <h3 data-key="hostelD">Hostel D</h3>
+    <div class="video-placeholder" data-key="videoPlaceholder">Video Placeholder</div>
+    <div class="fees" data-key="fees">Fees: Managed by Central Office</div>
+  </div>
+
+  <div class="hostel-list" onclick="goToLogin()">
+    <h3 data-key="hostelE">Hostel E</h3>
+    <div class="video-placeholder" data-key="videoPlaceholder">Video Placeholder</div>
+    <div class="fees" data-key="fees">Fees: Managed by Central Office</div>
+  </div>
+</div>
+
+<!-- Boys Hostel (still A only for now) -->
+<div class="content" id="boys" style="display:none;">
+  <div class="hostel-list" onclick="goToLogin()">
+    <h3 data-key="boysHostelA">Boys Hostel A</h3>
+    <div class="video-placeholder" data-key="videoPlaceholder">Video Placeholder</div>
+    <div class="fees" data-key="fees">Fees: Managed by Central Office</div>
+  </div>
+</div>
+
+<!-- Modals -->
+<div class="modal" id="registrationModal">
+  <div class="modal-content">
+    <h3 data-key="centralOfficeModal">Central Office Registration</h3>
+    <input type="text" id="uniqueId" placeholder="Enter Unique ID" required>
+    <br>
+    <button class="submit-btn" onclick="validateId()">Submit</button>
+    <button class="close-btn" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<div class="modal" id="accountModal">
+  <div class="modal-content">
+    <h3 data-key="accountModal">Enter Your Account Unique ID</h3>
+    <input type="text" id="accountId" placeholder="Enter Account ID" required>
+    <br>
+    <button class="submit-btn" onclick="validateAccountId()">Submit</button>
+    <button class="close-btn" onclick="closeAccountModal()">Close</button>
+  </div>
+</div>
+
+<div class="modal" id="admissionModal">
+  <div class="modal-content">
+    <h3 data-key="admissionModal">Enter Your Admission Unique ID</h3>
+    <input type="text" id="admissionId" placeholder="Enter Admission ID" required>
+    <br>
+    <button class="submit-btn" onclick="validateAdmissionId()">Submit</button>
+    <button class="close-btn" onclick="closeAdmissionModal()">Close</button>
+  </div>
+</div>
+<script src="api.js"></script>
+<script>
+// Translation dictionary
+const translations = {
+  "en": {
+    "title":"Vidya Pratishthan's","accountBtn":"Account","admissionBtn":"Admission Section","centralOfficeBtn":"Central Office Registration",
+    "address":"Vidyanagar, Baramati, Pune - 413133","hostello":"Hostello",
+    "girlsHostel":"Girls Hostel","boysHostel":"Boys Hostel",
+    "hostelA":"Hostel A","hostelB":"Hostel B","hostelC":"Hostel C","hostelD":"Hostel D","hostelE":"Hostel E",
+    "boysHostelA":"Boys Hostel A",
+    "videoPlaceholder":"Video Placeholder","fees":"Fees: Managed by Central Office",
+    "centralOfficeModal":"Central Office Registration","accountModal":"Enter Your Account Unique ID","admissionModal":"Enter Your Admission Unique ID"
+  },
+  "mr": {
+    "title":"विद्या प्रतिष्ठान","accountBtn":"खाते","admissionBtn":"प्रवेश विभाग","centralOfficeBtn":"केंद्र कार्यालय नोंदणी",
+    "address":"विद्यानगर, बारामती, पुणे - ४१३१३३","hostello":"होस्टेलो",
+    "girlsHostel":"मुलींसाठी हॉस्टेल","boysHostel":"मुलांसाठी हॉस्टेल",
+    "hostelA":"हॉस्टेल अ","hostelB":"हॉस्टेल ब","hostelC":"हॉस्टेल क","hostelD":"हॉस्टेल ड","hostelE":"हॉस्टेल ई",
+    "boysHostelA":"मुलांसाठी हॉस्टेल अ",
+    "videoPlaceholder":"व्हिडिओ स्थान धारक","fees":"शुल्क: केंद्र कार्यालयाद्वारे व्यवस्थापित",
+    "centralOfficeModal":"केंद्र कार्यालय नोंदणी","accountModal":"आपले खाते युनिक आयडी प्रविष्ट करा","admissionModal":"आपले प्रवेश युनिक आयडी प्रविष्ट करा"
+  },
+  "hi": {
+    "title":"विद्या प्रतिष्ठान","accountBtn":"खाता","admissionBtn":"प्रवेश अनुभाग","centralOfficeBtn":"केंद्रीय कार्यालय पंजीकरण",
+    "address":"विद्यानगर, बारामती, पुणे - 413133","hostello":"होस्टेलो",
+    "girlsHostel":"लड़कियों का हॉस्टल","boysHostel":"लड़कों का हॉस्टल",
+    "hostelA":"हॉस्टल A","hostelB":"हॉस्टल B","hostelC":"हॉस्टल C","hostelD":"हॉस्टल D","hostelE":"हॉस्टल E",
+    "boysHostelA":"लड़कों का हॉस्टल A",
+    "videoPlaceholder":"वीडियो प्लेसहोल्डर","fees":"शुल्क: केंद्रीय कार्यालय द्वारा प्रबंधित",
+    "centralOfficeModal":"केंद्रीय कार्यालय पंजीकरण","accountModal":"अपना खाता यूनिक आईडी दर्ज करें","admissionModal":"अपना प्रवेश यूनिक आईडी दर्ज करें"
+  }
+};
+
+// Change language
+function changeLanguage(lang){
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const key = el.getAttribute('data-key');
+    el.innerText = translations[lang][key] || el.innerText;
+  });
+  localStorage.setItem('selectedLanguage', lang);
+}
+
+// Load selected language on page load
+window.onload = ()=>{
+  const lang = localStorage.getItem('selectedLanguage') || 'en';
+  document.getElementById('languageSelect').value = lang;
+  changeLanguage(lang);
+}
+
+// Tab functions
+function showTab(tabName){
+  document.getElementById('girls').style.display = tabName==='girls'?'block':'none';
+  document.getElementById('boys').style.display = tabName==='boys'?'block':'none';
+  const buttons=document.querySelectorAll('nav button');
+  buttons.forEach(btn=>btn.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function goToLogin(){ window.location.href='login.html'; }
+
+// Central Office modal
+function openModal(){ document.getElementById('registrationModal').style.display='flex'; }
+function closeModal(){ document.getElementById('registrationModal').style.display='none'; }
+function validateId(){ const validIds=["VP123","VP456","VP789"]; const enteredId=document.getElementById('uniqueId').value.trim();
+if(validIds.includes(enteredId)){ alert("ID Verified ✅ Redirecting..."); window.location.href='centralofficelogin.html'; }
+else{ alert("❌ Invalid Unique ID! Access Denied."); } }
+
+// Account modal
+function openAccountModal(){ document.getElementById('accountModal').style.display='flex'; }
+function closeAccountModal(){ document.getElementById('accountModal').style.display='none'; }
+function validateAccountId(){ const validAccountIds=["AC123","AC456","AC789"]; const enteredId=document.getElementById('accountId').value.trim();
+if(validAccountIds.includes(enteredId)){ alert("Account ID Verified ✅ Redirecting..."); window.location.href='accountsectionlogin.html'; }
+else{ alert("❌ Invalid Account ID! Access Denied."); } }
+
+// Admission modal
+function openAdmissionModal(){ document.getElementById('admissionModal').style.display='flex'; }
+function closeAdmissionModal(){ document.getElementById('admissionModal').style.display='none'; }
+function validateAdmissionId(){ const validAdmissionIds=["AD123","AD456","AD789"]; const enteredId=document.getElementById('admissionId').value.trim();
+if(validAdmissionIds.includes(enteredId)){ alert("Admission ID Verified ✅ Redirecting..."); window.location.href='admissionsectionlogin.html'; }
+else{ alert("❌ Invalid Admission ID! Access Denied."); }
+}
+</script>
+</body>
+</html>

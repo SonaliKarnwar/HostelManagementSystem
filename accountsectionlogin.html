@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-key="pageTitle">Account Login</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .login-container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    text-align: center;
+    width: 300px;
+  }
+  .login-container h2 { margin-bottom: 20px; color: #2c3e50; }
+  .login-container input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  .login-container button {
+    width: 95%;
+    padding: 10px;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  .login-container button:hover { background: #2ecc71; }
+</style>
+</head>
+<body>
+
+<div class="login-container">
+  <h2 data-key="loginHeader">Account Login</h2>
+  <input type="text" id="username" data-key-placeholder="usernamePlaceholder" placeholder="Username" required>
+  <input type="password" id="password" data-key-placeholder="passwordPlaceholder" placeholder="Password" required>
+  <button onclick="loginAccount()" data-key="loginBtn">Login</button>
+</div>
+<script src="api.js"></script>
+<script>
+// Translation dictionary
+const translations = {
+  en: {
+    pageTitle: "Account Login",
+    loginHeader: "Account Login",
+    usernamePlaceholder: "Username",
+    passwordPlaceholder: "Password",
+    loginBtn: "Login",
+    loginSuccess: "✅ Login Successful! Redirecting to Dashboard...",
+    loginFail: "❌ Invalid Username or Password!"
+  },
+  mr: {
+    pageTitle: "अकाउंट लॉगिन",
+    loginHeader: "अकाउंट लॉगिन",
+    usernamePlaceholder: "वापरकर्तानाव",
+    passwordPlaceholder: "पासवर्ड",
+    loginBtn: "लॉगिन",
+    loginSuccess: "✅ लॉगिन यशस्वी! डॅशबोर्डकडे पुनर्निर्देशित करत आहे...",
+    loginFail: "❌ अवैध वापरकर्तानाव किंवा पासवर्ड!"
+  },
+  hi: {
+    pageTitle: "अकाउंट लॉगिन",
+    loginHeader: "अकाउंट लॉगिन",
+    usernamePlaceholder: "उपयोगकर्ता नाम",
+    passwordPlaceholder: "पासवर्ड",
+    loginBtn: "लॉगिन",
+    loginSuccess: "✅ लॉगिन सफल! डैशबोर्ड पर जा रहे हैं...",
+    loginFail: "❌ अवैध उपयोगकर्ता नाम या पासवर्ड!"
+  }
+};
+
+// Apply language from localStorage
+window.onload = () => {
+  const lang = localStorage.getItem('selectedLanguage') || 'en';
+  document.querySelectorAll('[data-key]').forEach(el => {
+    const key = el.getAttribute('data-key');
+    el.innerText = translations[lang][key] || el.innerText;
+  });
+  document.querySelectorAll('[data-key-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-key-placeholder');
+    el.placeholder = translations[lang][key] || el.placeholder;
+  });
+  document.title = translations[lang].pageTitle;
+};
+
+// Account login function
+function loginAccount() {
+  const validAccounts = {
+    "AC123": "pass123",
+    "AC456": "pass456",
+    "AC789": "pass789"
+  };
+
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
+  const lang = localStorage.getItem('selectedLanguage') || 'en';
+
+  if (validAccounts[username] && validAccounts[username] === password) {
+    alert(translations[lang].loginSuccess);
+    window.location.href = "Account.html"; // Dashboard page
+  } else {
+    alert(translations[lang].loginFail);
+  }
+}
+</script>
+</body>
+</html>

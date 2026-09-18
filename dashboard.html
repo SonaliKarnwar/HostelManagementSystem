@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Student Dashboard</title>
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+}
+
+header {
+    background: #2c3e50;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+#logoutBtn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+}
+
+.card {
+    flex: 1 1 220px;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    cursor: pointer;
+    text-align: center;
+}
+
+.card:hover {
+    background: #3498db;
+    color: white;
+}
+
+#sectionContainer {
+    background: white;
+    margin: 20px;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+input,
+textarea,
+select {
+    width: 90%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #2980b9;
+}
+
+.announcement {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<header>
+
+    <h1 id="welcomeText">
+        Welcome, Student
+    </h1>
+
+    <button id="logoutBtn">
+        Logout
+    </button>
+
+</header>
+
+
+<div class="cards">
+
+    <div
+        class="card"
+        onclick="openSection('admission')"
+    >
+        <h2>Admission</h2>
+        <p>Manage your hostel admission.</p>
+    </div>
+
+
+    <div
+        class="card"
+        onclick="openSection('complaint')"
+    >
+        <h2>Complaint</h2>
+        <p>Submit a hostel complaint.</p>
+    </div>
+
+
+    <div
+        class="card"
+        onclick="openSection('leave')"
+    >
+        <h2>Leave Application</h2>
+        <p>Apply for leave.</p>
+    </div>
+
+
+    <div
+        class="card"
+        onclick="openSection('announcement')"
+    >
+        <h2>Announcements</h2>
+        <p>View warden announcements.</p>
+    </div>
+
+</div>
+
+
+<div id="sectionContainer">
+
+    <h2>
+        Student Dashboard
+    </h2>
+
+    <p>
+        Select an option above.
+    </p>
+
+</div>
+
+
+<script src="api.js"></script>
+
+
+<script>
+
+/* =====================================
+   LOGIN CHECK
+===================================== */
+
+const loggedInUser =
+    JSON.parse(
+        localStorage.getItem(
+            "loggedInUser"
+        )
+    );
+
+
+if (!loggedInUser) {
+
+    alert(
+        "Please login first."
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================
+   ROLE CHECK
+===================================== */
+
+if (
+    loggedInUser &&
+    loggedInUser.role !== "STUDENT"
+) {
+
+    alert(
+        "Student access required."
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================
+   DISPLAY USER NAME
+===================================== */
+
+if (loggedInUser) {
+
+    document.getElementById(
+        "welcomeText"
+    ).innerText =
+        "Welcome, " +
+        (
+            loggedInUser.name ||
+            loggedInUser.username ||
+            "Student"
+        );
+
+}
+
+
+/* =====================================
+   OPEN SECTION
+===================================== */
+
+function openSection(section) {
+
+    const container =
+        document.getElementById(
+            "sectionContainer"
+        );
+
+
+    /* ===============================
+       ADMISSION
+    =============================== */
+
+    if (section === "admission") {
+
+        container.innerHTML = `
+
+            <h2>Admission Form</h2>
+
+            <form id="admissionForm">
+
+                <input
+                    type="text"
+                    id="fullName"
+                    placeholder="Full Name"
+                    required
+                >
+
+                <input
+                    type="date"
+                    id="dob"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="yearAdmission"
+                    placeholder="Year of Admission"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="aadhar"
+                    placeholder="Aadhar Card Number"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="personalPhone"
+                    placeholder="Personal Phone Number"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="parentPhone"
+                    placeholder="Parent's Phone Number"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="studyYear"
+                    placeholder="Study Year"
+                    required
+                >
+
+                <textarea
+                    id="address"
+                    placeholder="Address"
+                    rows="4"
+                    required
+                ></textarea>
+
+                <button type="submit">
+                    Save Profile
+                </button>
+
+            </form>
+
+        `;
+
+    }
+
+
+    /* ===============================
+       COMPLAINT
+    =============================== */
+
+    else if (section === "complaint") {
+
+        container.innerHTML = `
+
+            <h2>Complaint Box</h2>
+
+            <form
+                onsubmit="submitComplaint(event)"
+            >
+
+                <input
+                    id="complaintSubject"
+                    type="text"
+                    placeholder="Subject"
+                    required
+                >
+
+                <textarea
+                    id="complaintText"
+                    placeholder="Write your complaint..."
+                    rows="5"
+                    required
+                ></textarea>
+
+                <button type="submit">
+                    Submit Complaint
+                </button>
+
+            </form>
+
+        `;
+
+    }
+
+
+    /* ===============================
+       LEAVE
+    =============================== */
+
+    else if (section === "leave") {
+
+        container.innerHTML = `
+
+            <h2>Leave Application</h2>
+
+            <form
+                onsubmit="submitLeave(event)"
+            >
+
+                <input
+                    id="leaveName"
+                    type="text"
+                    placeholder="Student Name"
+                    value="${
+                        loggedInUser.name || ""
+                    }"
+                    required
+                >
+
+                <input
+                    id="leaveStudyYear"
+                    type="text"
+                    placeholder="Study Year"
+                    required
+                >
+
+                <textarea
+                    id="leaveReason"
+                    placeholder="Reason for Leave"
+                    rows="4"
+                    required
+                ></textarea>
+
+                <label>
+                    Start Date
+                </label>
+
+                <input
+                    id="startDate"
+                    type="date"
+                    required
+                >
+
+                <label>
+                    End Date
+                </label>
+
+                <input
+                    id="endDate"
+                    type="date"
+                    required
+                >
+
+                <input
+                    id="leaveParentPhone"
+                    type="text"
+                    placeholder="Parent's Phone Number"
+                    required
+                >
+
+                <button type="submit">
+                    Submit Leave Application
+                </button>
+
+            </form>
+
+        `;
+
+    }
+
+
+    /* ===============================
+       ANNOUNCEMENTS
+    =============================== */
+
+    else if (
+        section === "announcement"
+    ) {
+
+        const announcements =
+            JSON.parse(
+                localStorage.getItem(
+                    "announcements"
+                )
+            ) || [];
+
+
+        let html = `
+            <h2>Announcements by Warden</h2>
+        `;
+
+
+        if (
+            announcements.length === 0
+        ) {
+
+            html += `
+                <p>
+                    No announcements available.
+                </p>
+            `;
+
+        }
+
+
+        announcements.forEach(
+            announcement => {
+
+                html += `
+                    <div class="announcement">
+                        <p>
+                            ${announcement}
+                        </p>
+                    </div>
+                `;
+
+            }
+        );
+
+
+        container.innerHTML = html;
+
+    }
+
+}
+
+
+/* =====================================
+   COMPLAINT
+===================================== */
+
+function submitComplaint(event) {
+
+    event.preventDefault();
+
+
+    const subject =
+        document.getElementById(
+            "complaintSubject"
+        ).value;
+
+
+    const complaint =
+        document.getElementById(
+            "complaintText"
+        ).value;
+
+
+    alert(
+        "Complaint submitted successfully!"
+    );
+
+
+    console.log({
+        student:
+            loggedInUser.username,
+
+        subject:
+            subject,
+
+        complaint:
+            complaint
+    });
+
+}
+
+
+/* =====================================
+   LEAVE
+===================================== */
+
+function submitLeave(event) {
+
+    event.preventDefault();
+
+
+    const reason =
+        document.getElementById(
+            "leaveReason"
+        ).value;
+
+
+    alert(
+        "Leave application submitted!"
+    );
+
+
+    console.log({
+        student:
+            loggedInUser.username,
+
+        reason:
+            reason
+    });
+
+}
+
+
+/* =====================================
+   LOGOUT
+===================================== */
+
+document
+    .getElementById("logoutBtn")
+    .addEventListener(
+        "click",
+        function() {
+
+            localStorage.removeItem(
+                "loggedInUser"
+            );
+
+            localStorage.removeItem(
+                "username"
+            );
+
+            localStorage.removeItem(
+                "role"
+            );
+
+
+            window.location.href =
+                "login.html";
+
+        }
+    );
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Warden Dashboard - Hostel Management</title>
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+}
+
+header {
+    background: #2c3e50;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 20px;
+}
+
+header button {
+    background: #e74c3c;
+    border: none;
+    padding: 8px 16px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+}
+
+.card {
+    flex: 1 1 calc(25% - 20px);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-align: center;
+    cursor: pointer;
+}
+
+.card:hover {
+    background: #3498db;
+    color: white;
+}
+
+#sectionContainer {
+    background: white;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+textarea,
+input {
+    width: 90%;
+    padding: 8px;
+    margin: 8px 0;
+}
+
+button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 3px;
+}
+
+button:hover {
+    background: #2980b9;
+}
+
+.room-item,
+.announcement-item,
+.student-item,
+.complaint-item,
+.notification-item {
+    margin: 10px 0;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+<header>
+
+    <h1 id="welcomeText">
+        Welcome, Warden
+    </h1>
+
+    <button id="logoutBtn">
+        Logout
+    </button>
+
+</header>
+
+
+<div class="cards-container">
+
+    <div
+        class="card"
+        onclick="openSection('announcement')"
+    >
+
+        <h2>
+            Announcements
+        </h2>
+
+        <p>
+            Post / Remove announcements.
+        </p>
+
+    </div>
+
+
+    <div
+        class="card"
+        onclick="openSection('complaints')"
+    >
+
+        <h2>
+            Complaints
+        </h2>
+
+        <p>
+            View student complaints.
+        </p>
+
+    </div>
+
+
+    <div
+        class="card"
+        onclick="openSection('admissions')"
+    >
+
+        <h2>
+            Admissions
+        </h2>
+
+        <p>
+            Manage student admissions.
+        </p>
+
+    </div>
+
+
+    <div
+        class="card"
+        onclick="openSection('applications')"
+    >
+
+        <h2>
+            Applications
+        </h2>
+
+        <p>
+            Approve / Reject applications.
+        </p>
+
+    </div>
+
+
+    <div
+        class="card"
+        onclick="openSection('rooms')"
+    >
+
+        <h2>
+            Rooms
+        </h2>
+
+        <p>
+            Manage rooms and vacancies.
+        </p>
+
+    </div>
+
+
+    <div
+        class="card"
+        onclick="openSection('floorNotes')"
+    >
+
+        <h2>
+            Floor Notes
+        </h2>
+
+        <p>
+            Write notes for students.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div id="sectionContainer">
+
+    <h2>
+        Warden Dashboard
+    </h2>
+
+    <p>
+        Select an option above.
+    </p>
+
+</div>
+
+</div>
+
+
+<script src="api.js"></script>
+
+
+<script>
+
+/* =====================================
+   LOGIN CHECK
+===================================== */
+
+const loggedInUser =
+    JSON.parse(
+        localStorage.getItem(
+            "loggedInUser"
+        )
+    );
+
+
+/*
+ * No logged-in user
+ */
+
+if (!loggedInUser) {
+
+    alert(
+        "Please login first."
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================
+   ROLE CHECK
+===================================== */
+
+if (
+    loggedInUser &&
+    loggedInUser.role &&
+    loggedInUser.role
+        .toString()
+        .toUpperCase() !== "WARDEN"
+) {
+
+    alert(
+        "Warden access required."
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================
+   WELCOME
+===================================== */
+
+if (loggedInUser) {
+
+    document.getElementById(
+        "welcomeText"
+    ).innerText =
+        "Welcome, " +
+        (
+            loggedInUser.name ||
+            loggedInUser.username ||
+            "Warden"
+        );
+
+}
+
+
+/* =====================================
+   OPEN SECTION
+===================================== */
+
+function openSection(section) {
+
+    const container =
+        document.getElementById(
+            "sectionContainer"
+        );
+
+
+    /* ===============================
+       ANNOUNCEMENTS
+    =============================== */
+
+    if (
+        section === "announcement"
+    ) {
+
+        container.innerHTML = `
+
+            <h2>
+                Announcements
+            </h2>
+
+            <textarea
+                id="announcementText"
+                placeholder="Write announcement..."
+            ></textarea>
+
+            <br>
+
+            <button
+                onclick="postAnnouncement()"
+            >
+                Post Announcement
+            </button>
+
+            <div
+                id="announcementList"
+            ></div>
+
+        `;
+
+
+        loadAnnouncements();
+
+    }
+
+
+    /* ===============================
+       COMPLAINTS
+    =============================== */
+
+    else if (section === "complaints") {
+    container.innerHTML = `
+        <h2>Student Complaints</h2>
+        <div id="complaintsList">
+            Loading complaints...
+        </div>
+    `;
+
+    loadComplaints();
+}
+
+
+    /* ===============================
+       ADMISSIONS
+    =============================== */
+
+    else if (
+        section === "admissions"
+    ) {
+
+        container.innerHTML = `
+
+            <h2>
+                Student Admissions
+            </h2>
+
+            <p>
+
+                Admissions will be connected
+                to Spring Boot database next.
+
+            </p>
+
+        `;
+
+    }
+
+
+    /* ===============================
+       APPLICATIONS
+    =============================== */
+
+    else if (
+        section === "applications"
+    ) {
+
+        container.innerHTML = `
+
+            <h2>
+                Student Applications
+            </h2>
+
+            <p>
+
+                Applications will be loaded
+                from Spring Boot next.
+
+            </p>
+
+        `;
+
+    }
+
+
+    /* ===============================
+       ROOMS
+    =============================== */
+
+    else if (
+        section === "rooms"
+    ) {
+
+        container.innerHTML = `
+
+            <h2>
+                Rooms Management
+            </h2>
+
+            <div class="room-item">
+
+                Room 101 -
+                Vacant
+
+            </div>
+
+            <div class="room-item">
+
+                Room 102 -
+                Occupied
+
+            </div>
+
+            <p>
+
+                Room management will be
+                connected to MySQL next.
+
+            </p>
+
+        `;
+
+    }
+
+
+    /* ===============================
+       FLOOR NOTES
+    =============================== */
+
+    else if (
+        section === "floorNotes"
+    ) {
+
+        container.innerHTML = `
+
+            <h2>
+                Floor Notes
+            </h2>
+
+            <textarea
+                id="floorNoteInput"
+                placeholder="Write floor note..."
+            ></textarea>
+
+            <br>
+
+            <button
+                onclick="saveFloorNote()"
+            >
+                Save
+            </button>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================
+   POST ANNOUNCEMENT
+===================================== */
+
+function postAnnouncement() {
+
+    const text =
+        document.getElementById(
+            "announcementText"
+        ).value.trim();
+
+
+    if (!text) {
+
+        alert(
+            "Please write an announcement."
+        );
+
+        return;
+
+    }
+
+
+    let announcements =
+        JSON.parse(
+            localStorage.getItem(
+                "announcements"
+            )
+        ) || [];
+
+
+    announcements.push(text);
+
+
+    localStorage.setItem(
+        "announcements",
+        JSON.stringify(
+            announcements
+        )
+    );
+
+
+    alert(
+        "Announcement posted!"
+    );
+
+
+    openSection(
+        "announcement"
+    );
+
+}
+
+/* =====================================
+   LOAD COMPLAINTS
+===================================== */
+
+async function loadComplaints() {
+
+    const complaintsList =
+        document.getElementById("complaintsList");
+
+    if (!complaintsList) {
+        return;
+    }
+
+    try {
+
+        complaintsList.innerHTML =
+            "<p>Loading complaints...</p>";
+
+        const response =
+            await fetch(
+                "http://localhost:8080/api/complaints"
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                "Failed to load complaints"
+            );
+        }
+
+        const complaints =
+            await response.json();
+
+        console.log(
+            "Complaints received:",
+            complaints
+        );
+
+        if (
+            !complaints ||
+            complaints.length === 0
+        ) {
+
+            complaintsList.innerHTML = `
+                <div class="complaint-item">
+                    <p>No complaints found.</p>
+                </div>
+            `;
+
+            return;
+        }
+
+        complaintsList.innerHTML = "";
+
+        complaints.forEach(
+            complaint => {
+
+                const complaintDiv =
+                    document.createElement("div");
+
+                complaintDiv.className =
+                    "complaint-item";
+
+                complaintDiv.innerHTML = `
+                    <h3>
+                        ${complaint.title || "Complaint"}
+                    </h3>
+
+                    <p>
+                        <strong>Description:</strong>
+                        ${complaint.description || "No description"}
+                    </p>
+
+                    <p>
+                        <strong>Student ID:</strong>
+                        ${complaint.studentId || "N/A"}
+                    </p>
+
+                    <p>
+                        <strong>Date:</strong>
+                        ${complaint.date || "N/A"}
+                    </p>
+
+                    <p>
+                        <strong>Status:</strong>
+                        ${complaint.status || "PENDING"}
+                    </p>
+                `;
+
+                complaintsList.appendChild(
+                    complaintDiv
+                );
+
+            }
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Error loading complaints:",
+            error
+        );
+
+        complaintsList.innerHTML = `
+            <div class="complaint-item">
+                <p>
+                    Unable to load complaints
+                    from the server.
+                </p>
+            </div>
+        `;
+
+    }
+}
+
+
+
+/* =====================================
+   LOAD ANNOUNCEMENTS
+===================================== */
+
+function loadAnnouncements() {
+
+    const announcements =
+        JSON.parse(
+            localStorage.getItem(
+                "announcements"
+            )
+        ) || [];
+
+
+    const list =
+        document.getElementById(
+            "announcementList"
+        );
+
+
+    if (!list) {
+
+        return;
+
+    }
+
+
+    list.innerHTML = "";
+
+
+    announcements.forEach(
+        (announcement, index) => {
+
+            list.innerHTML += `
+
+                <div
+                    class="announcement-item"
+                >
+
+                    ${announcement}
+
+                    <button
+                        onclick="
+                            deleteAnnouncement(
+                                ${index}
+                            )
+                        "
+                    >
+
+                        Delete
+
+                    </button>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+}
+
+
+
+
+/* =====================================
+   DELETE ANNOUNCEMENT
+===================================== */
+
+function deleteAnnouncement(index) {
+
+    let announcements =
+        JSON.parse(
+            localStorage.getItem(
+                "announcements"
+            )
+        ) || [];
+
+
+    announcements.splice(
+        index,
+        1
+    );
+
+
+    localStorage.setItem(
+        "announcements",
+        JSON.stringify(
+            announcements
+        )
+    );
+
+
+    openSection(
+        "announcement"
+    );
+
+}
+
+
+/* =====================================
+   SAVE FLOOR NOTE
+===================================== */
+
+function saveFloorNote() {
+
+    const note =
+        document.getElementById(
+            "floorNoteInput"
+        ).value.trim();
+
+
+    if (!note) {
+
+        alert(
+            "Please write a floor note."
+        );
+
+        return;
+
+    }
+
+
+    localStorage.setItem(
+        "floorNote",
+        note
+    );
+
+
+    alert(
+        "Floor note saved!"
+    );
+
+}
+
+
+/* =====================================
+   LOGOUT
+===================================== */
+
+document
+    .getElementById("logoutBtn")
+    .addEventListener(
+        "click",
+        function() {
+
+            localStorage.removeItem(
+                "loggedInUser"
+            );
+
+            localStorage.removeItem(
+                "username"
+            );
+
+            localStorage.removeItem(
+                "role"
+            );
+
+
+            window.location.href =
+                "login.html";
+
+        }
+    );
+
+</script>
+
+</body>
+</html>

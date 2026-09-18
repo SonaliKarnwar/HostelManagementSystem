@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title data-key="pageTitle">Login Page</title>
+
+<link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <!-- Language Selection -->
+
+    <div class="language-selection">
+
+        <label>
+            <input
+                type="radio"
+                name="lang"
+                value="en"
+                checked
+            />
+            English
+        </label>
+
+        <label>
+            <input
+                type="radio"
+                name="lang"
+                value="mr"
+            />
+            Marathi
+        </label>
+
+        <label>
+            <input
+                type="radio"
+                name="lang"
+                value="hi"
+            />
+            Hindi
+        </label>
+
+    </div>
+
+
+    <!-- User Icon -->
+
+    <img
+        src="https://cdn-icons-png.flaticon.com/512/847/847969.png"
+        alt="User Icon"
+        width="100"
+    />
+
+
+    <!-- Role Selection -->
+
+    <div class="role-selection">
+
+        <label>
+
+            <input
+                type="radio"
+                name="role"
+                value="student"
+                checked
+            />
+
+            <span data-key="studentRole">
+                Student
+            </span>
+
+        </label>
+
+
+        <label>
+
+            <input
+                type="radio"
+                name="role"
+                value="warden"
+            />
+
+            <span data-key="wardenRole">
+                Warden
+            </span>
+
+        </label>
+
+    </div>
+
+
+    <!-- Login Form -->
+
+    <form id="loginForm">
+
+        <div class="input-group username">
+
+            <input
+                type="text"
+                name="username"
+                data-key-placeholder="username"
+                placeholder="Username"
+                required
+            />
+
+        </div>
+
+
+        <div class="input-group password">
+
+            <input
+                type="password"
+                name="password"
+                data-key-placeholder="password"
+                placeholder="Password"
+                required
+            />
+
+        </div>
+
+
+        <div class="options">
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    name="remember"
+                />
+
+                <span data-key="remember">
+                    Remember me
+                </span>
+
+            </label>
+
+
+            <a href="#" data-key="forgot">
+                Forgot Password?
+            </a>
+
+        </div>
+
+
+        <button
+            type="submit"
+            id="loginButton"
+            data-key="signin"
+        >
+            SIGN IN
+        </button>
+
+    </form>
+
+
+    <!-- Register -->
+
+    <div class="register-link">
+
+        <span data-key="registerText">
+            Don’t have an account?
+        </span>
+
+        <a
+            href="register.html"
+            data-key="registerLink"
+        >
+            Register here
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- API -->
+
+<script src="api.js"></script>
+
+
+<script>
+
+/* =========================================
+   TRANSLATIONS
+========================================= */
+
+const translations = {
+
+    en: {
+
+        pageTitle: "Login Page",
+
+        studentRole: "Student",
+
+        wardenRole: "Warden",
+
+        username: "Username",
+
+        password: "Password",
+
+        remember: "Remember me",
+
+        forgot: "Forgot Password?",
+
+        signin: "SIGN IN",
+
+        registerText: "Don’t have an account?",
+
+        registerLink: "Register here"
+
+    },
+
+
+    mr: {
+
+        pageTitle: "लॉगिन पृष्ठ",
+
+        studentRole: "विद्यार्थी",
+
+        wardenRole: "वार्डन",
+
+        username: "वापरकर्त्याचे नाव",
+
+        password: "पासवर्ड",
+
+        remember: "माझे लक्ष ठेवा",
+
+        forgot: "पासवर्ड विसरलात?",
+
+        signin: "साइन इन करा",
+
+        registerText: "खाते नाही का?",
+
+        registerLink: "येथे नोंदणी करा"
+
+    },
+
+
+    hi: {
+
+        pageTitle: "लॉगिन पृष्ठ",
+
+        studentRole: "छात्र",
+
+        wardenRole: "वार्डन",
+
+        username: "उपयोगकर्ता नाम",
+
+        password: "पासवर्ड",
+
+        remember: "मुझे याद रखें",
+
+        forgot: "पासवर्ड भूल गए?",
+
+        signin: "साइन इन करें",
+
+        registerText: "खाता नहीं है?",
+
+        registerLink: "यहाँ पंजीकरण करें"
+
+    }
+
+};
+
+
+/* =========================================
+   APPLY LANGUAGE
+========================================= */
+
+function applyLanguage(lang) {
+
+    localStorage.setItem(
+        "selectedLanguage",
+        lang
+    );
+
+
+    document
+        .querySelectorAll("[data-key]")
+        .forEach(element => {
+
+            const key =
+                element.getAttribute("data-key");
+
+
+            if (
+                translations[lang] &&
+                translations[lang][key]
+            ) {
+
+                element.innerText =
+                    translations[lang][key];
+
+            }
+
+        });
+
+
+    document
+        .querySelectorAll("[data-key-placeholder]")
+        .forEach(element => {
+
+            const key =
+                element.getAttribute(
+                    "data-key-placeholder"
+                );
+
+
+            if (
+                translations[lang] &&
+                translations[lang][key]
+            ) {
+
+                element.placeholder =
+                    translations[lang][key];
+
+            }
+
+        });
+
+
+    document.title =
+        translations[lang].pageTitle;
+
+}
+
+
+/* =========================================
+   PAGE LOAD
+========================================= */
+
+window.addEventListener(
+    "load",
+    function() {
+
+        const lang =
+            localStorage.getItem(
+                "selectedLanguage"
+            ) || "en";
+
+
+        const selectedLanguage =
+            document.querySelector(
+                `input[name="lang"][value="${lang}"]`
+            );
+
+
+        if (selectedLanguage) {
+
+            selectedLanguage.checked = true;
+
+        }
+
+
+        applyLanguage(lang);
+
+    }
+);
+
+
+/* =========================================
+   LANGUAGE CHANGE
+========================================= */
+
+document
+    .querySelectorAll(
+        'input[name="lang"]'
+    )
+    .forEach(radio => {
+
+        radio.addEventListener(
+            "change",
+            function() {
+
+                applyLanguage(
+                    this.value
+                );
+
+            }
+        );
+
+    });
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+document
+    .getElementById("loginForm")
+    .addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            /* =========================
+               GET USERNAME
+            ========================= */
+
+            const username =
+                document
+                    .querySelector(
+                        'input[name="username"]'
+                    )
+                    .value
+                    .trim();
+
+
+            /* =========================
+               GET PASSWORD
+            ========================= */
+
+            const password =
+                document
+                    .querySelector(
+                        'input[name="password"]'
+                    )
+                    .value;
+
+
+            /* =========================
+               GET SELECTED ROLE
+            ========================= */
+
+            const selectedRole =
+                document
+                    .querySelector(
+                        'input[name="role"]:checked'
+                    )
+                    .value
+                    .toLowerCase();
+
+
+            const loginButton =
+                document.getElementById(
+                    "loginButton"
+                );
+
+
+            /* =========================
+               VALIDATION
+            ========================= */
+
+            if (!username || !password) {
+
+                alert(
+                    "Please enter username and password."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                loginButton.disabled = true;
+
+                loginButton.innerText =
+                    "Logging in...";
+
+
+                console.log(
+                    "Username:",
+                    username
+                );
+
+
+                console.log(
+                    "Selected role:",
+                    selectedRole
+                );
+
+
+                /* =========================
+                   SPRING BOOT LOGIN
+                ========================= */
+
+                const response =
+                    await fetch(
+                        "http://localhost:8080/api/auth/login",
+                        {
+
+                            method: "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body: JSON.stringify({
+
+                                username:
+                                    username,
+
+                                password:
+                                    password
+
+                            })
+
+                        }
+                    );
+
+
+                console.log(
+                    "Response status:",
+                    response.status
+                );
+
+
+                /* =========================
+                   LOGIN FAILED
+                ========================= */
+
+                if (!response.ok) {
+
+                    const errorMessage =
+                        await response.text();
+
+
+                    console.log(
+                        "Login failed:",
+                        errorMessage
+                    );
+
+
+                    alert(
+                        errorMessage ||
+                        "Invalid username or password."
+                    );
+
+
+                    return;
+
+                }
+
+
+                /* =========================
+                   GET BACKEND USER
+                ========================= */
+
+                const user =
+                    await response.json();
+
+
+                console.log(
+                    "Backend user:",
+                    user
+                );
+
+
+                /* =========================
+                   CHECK BACKEND ROLE
+                ========================= */
+
+                if (!user.role) {
+
+                    alert(
+                        "Login successful, but no role was returned by backend."
+                    );
+
+                    return;
+
+                }
+
+
+                const backendRole =
+                    user.role
+                        .toString()
+                        .toLowerCase();
+
+
+                console.log(
+                    "Backend role:",
+                    backendRole
+                );
+
+
+                /* =========================
+                   CHECK SELECTED ROLE
+                ========================= */
+
+                if (
+                    selectedRole !== backendRole
+                ) {
+
+                    alert(
+                        "Wrong role selected.\n\n" +
+                        "Selected: " +
+                        selectedRole +
+                        "\n" +
+                        "Account role: " +
+                        backendRole
+                    );
+
+
+                    return;
+
+                }
+
+
+                /* =========================
+                   SAVE USER
+                ========================= */
+
+                localStorage.setItem(
+                    "loggedInUser",
+                    JSON.stringify(user)
+                );
+
+
+                localStorage.setItem(
+                    "username",
+                    user.username ||
+                    username
+                );
+
+
+                localStorage.setItem(
+                    "role",
+                    backendRole
+                );
+
+
+                console.log(
+                    "Login data saved."
+                );
+
+
+                /* =========================
+                   WARDEN
+                ========================= */
+
+                if (
+                    backendRole === "warden"
+                ) {
+
+                    alert(
+                        "Warden login successful!"
+                    );
+
+
+                    window.location.href =
+                        "warden_dashboard.html";
+
+
+                    return;
+
+                }
+
+
+                /* =========================
+                   STUDENT
+                ========================= */
+
+                if (
+                    backendRole === "student"
+                ) {
+
+                    alert(
+                        "Student login successful!"
+                    );
+
+
+                    window.location.href =
+                        "dashboard.html";
+
+
+                    return;
+
+                }
+
+
+                /* =========================
+                   UNKNOWN ROLE
+                ========================= */
+
+                alert(
+                    "Unknown account role: " +
+                    user.role
+                );
+
+            }
+
+
+            catch (error) {
+
+                console.error(
+                    "Login error:",
+                    error
+                );
+
+
+                alert(
+                    "Cannot connect to Spring Boot backend.\n\n" +
+                    "Please make sure Spring Boot is running on port 8080."
+                );
+
+            }
+
+
+            finally {
+
+                loginButton.disabled =
+                    false;
+
+
+                const currentLanguage =
+                    localStorage.getItem(
+                        "selectedLanguage"
+                    ) || "en";
+
+
+                loginButton.innerText =
+                    translations[
+                        currentLanguage
+                    ].signin;
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
